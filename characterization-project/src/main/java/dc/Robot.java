@@ -27,6 +27,8 @@ import edu.wpi.first.wpilibj.SerialPort;
 import edu.wpi.first.wpilibj.I2C;
 import edu.wpi.first.wpilibj.SPI;
 
+import com.playingwithfusion.CANVenom;
+
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
@@ -56,7 +58,7 @@ import java.util.ArrayList;
 
 public class Robot extends TimedRobot {
 
-  static private int ENCODER_EDGES_PER_REV = 1 / 4;
+  static private double ENCODER_EDGES_PER_REV = 1;
   static private int PIDIDX = 0;
   static private int ENCODER_EPR = 1;
   static private double GEARING = 1;
@@ -108,7 +110,8 @@ public class Robot extends TimedRobot {
     // setup encoder if motor isn't a follower
     if (side != Sides.FOLLOWER) {
     
-      Encoder encoder;
+      
+      CANEncoder encoder = motor.getEncoder();
 
 
 
@@ -118,21 +121,18 @@ public class Robot extends TimedRobot {
       case RIGHT:
         // set right side methods = encoder methods
 
-        encoder = new Encoder(13, 14);
-        encoder.setReverseDirection(false);
 
-        encoder.setDistancePerPulse(encoderConstant);
-        rightEncoderPosition = encoder::getDistance;
-        rightEncoderRate = encoder::getRate;
+        rightEncoderPosition = ()
+          -> encoder.getPosition() * encoderConstant;
+        rightEncoderRate = ()
+          -> encoder.getVelocity() * encoderConstant / 60.;
 
         break;
       case LEFT:
-        encoder = new Encoder(1, 2);
-        encoder.setReverseDirection(true);
-        encoder.setDistancePerPulse(encoderConstant);
-        leftEncoderPosition = encoder::getDistance;
-        leftEncoderRate = encoder::getRate;
-
+        leftEncoderPosition = ()
+          -> encoder.getPosition() * encoderConstant;
+        leftEncoderRate = ()
+          -> encoder.getVelocity() * encoderConstant / 60.;
 
         break;
       default:
@@ -180,7 +180,8 @@ public class Robot extends TimedRobot {
 
     // Note that the angle from the NavX and all implementors of WPILib Gyro
     // must be negated because getAngle returns a clockwise positive angle
-    gyroAngleRadians = () -> 0.0;
+    Gyro gyro = new ADXRS450_Gyro(SPI.Port.kMXP);
+    gyroAngleRadians = () -> -1 * Math.toRadians(gyro.getAngle());
 
     // Set the update rate instead of using flush because of a ntcore bug
     // -> probably don't want to do this on a robot in competition

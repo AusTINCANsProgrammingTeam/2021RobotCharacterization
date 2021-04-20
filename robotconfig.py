@@ -23,7 +23,7 @@
     # Note that the Data Port is the 10 pin port on the top of the SparkMax
     # Setting this to False indicates you want to use the 6 pin encoder port
     # which is located in the front of the SparkMax
-    "useDataPort": True,
+    "useDataPort": False,
     # Encoder ports (leave empty "[]" if not needed)
     # Specifying encoder ports indicates you want to use Rio-side encoders
     # If doing drive test, treat this as the left side of the drivetrain
@@ -46,6 +46,7 @@
     # "0" (Pigeon CAN ID or AnalogGyro channel),
     # "new WPI_TalonSRX(3)" (Pigeon on a Talon SRX),
     # "" (NavX using default SPI, ADXRS450 using onboard CS0, or no gyro)
-    "gyroPort": "",
+    "gyroPort": "SPI.Port.kMXP",
 }
+
 

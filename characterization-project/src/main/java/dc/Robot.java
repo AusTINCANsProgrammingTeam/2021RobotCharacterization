@@ -154,23 +154,21 @@ public class Robot extends TimedRobot {
 
     stick = new Joystick(0);
     
+    boolean temp_leftInverted = false; //should be false
     // create left motor
-    CANSparkMax leftMotor = setupCANSparkMax(1, Sides.LEFT, true);
-
-    CANSparkMax leftFollowerID2 = setupCANSparkMax(2, Sides.FOLLOWER, true);
-    leftFollowerID2.follow(leftMotor, true);
+    CANSparkMax leftMotor = setupCANSparkMax(1, Sides.LEFT, temp_leftInverted);
+    CANSparkMax leftFollowerID2 = setupCANSparkMax(2, Sides.FOLLOWER, temp_leftInverted);
+    leftFollowerID2.follow(leftMotor);
+    CANSparkMax leftFollowerID16 = setupCANSparkMax(16, Sides.FOLLOWER, temp_leftInverted);
+    leftFollowerID16.follow(leftMotor);
         
     
-    CANSparkMax leftFollowerID16 = setupCANSparkMax(16, Sides.FOLLOWER, true);
-    leftFollowerID16.follow(leftMotor, true);
-        
-    
-
-    CANSparkMax rightMotor = setupCANSparkMax(13, Sides.RIGHT, false);
-    CANSparkMax rightFollowerID14 = setupCANSparkMax(14, Sides.FOLLOWER, false);
-    rightFollowerID14.follow(rightMotor, false);
-    CANSparkMax rightFollowerID15 = setupCANSparkMax(15, Sides.FOLLOWER, false);
-    rightFollowerID15.follow(rightMotor, false);
+    boolean temp_rightInverted = false; //should be false
+    CANSparkMax rightMotor = setupCANSparkMax(13, Sides.RIGHT, temp_rightInverted);
+    CANSparkMax rightFollowerID14 = setupCANSparkMax(14, Sides.FOLLOWER, temp_rightInverted);
+    rightFollowerID14.follow(rightMotor);
+    CANSparkMax rightFollowerID15 = setupCANSparkMax(15, Sides.FOLLOWER, temp_rightInverted);
+    rightFollowerID15.follow(rightMotor);
     drive = new DifferentialDrive(leftMotor, rightMotor);
     drive.setDeadband(0);
 
@@ -180,7 +178,9 @@ public class Robot extends TimedRobot {
 
     // Note that the angle from the NavX and all implementors of WPILib Gyro
     // must be negated because getAngle returns a clockwise positive angle
-    Gyro gyro = new ADXRS450_Gyro(SPI.Port.kMXP);
+    
+    Gyro gyro = new ADXRS450_Gyro(SPI.Port.kOnboardCS0);
+  
     gyroAngleRadians = () -> -1 * Math.toRadians(gyro.getAngle());
 
     // Set the update rate instead of using flush because of a ntcore bug
@@ -223,7 +223,7 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopPeriodic() {
-    drive.arcadeDrive(-stick.getY(), stick.getX());
+    drive.arcadeDrive(stick.getRawAxis(1), stick.getRawAxis(4));
   }
 
   @Override
@@ -280,6 +280,8 @@ public class Robot extends TimedRobot {
     numberArray[8] = rightRate;
     numberArray[9] = gyroAngleRadians.get();
 
+   //System.out.println(leftMotorVolts);
+   //System.out.println(leftPosition);
     // Add data to a string that is uploaded to NT
     for (double num : numberArray) {
       entries.add(num);

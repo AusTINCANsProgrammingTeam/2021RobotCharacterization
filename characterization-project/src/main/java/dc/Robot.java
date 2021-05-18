@@ -223,6 +223,7 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopPeriodic() {
+    //drive.tankDrive(stick.getRawAxis(1), stick.getRawAxis(1));
     drive.arcadeDrive(stick.getRawAxis(1), stick.getRawAxis(4));
   }
 
@@ -260,7 +261,7 @@ public class Robot extends TimedRobot {
     double rightMotorVolts = motorVolts;
 
     // Retrieve the commanded speed from NetworkTables
-    double autospeed = autoSpeedEntry.getDouble(0);
+    double autospeed = -autoSpeedEntry.getDouble(0);
     priorAutospeed = autospeed;
 
     // command motors to do things
